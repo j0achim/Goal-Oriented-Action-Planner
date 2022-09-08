@@ -48,7 +48,7 @@ Goals and Actions both share a similar design pattern with some key differences.
 
 I have added a small tool [mock.lua](src/server/GOAP/mock.lua) that lets you virtualize goals and actions by making mock modules, useful if you want to test different scenarios without having to play test. 
 
-[found here](src/server/GOAP/mock.lua)
+![mock.lua](media/mock_tool.png "mock.lua")
 
 ## Getting Started
 
