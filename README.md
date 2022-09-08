@@ -10,7 +10,10 @@ As a visual example of how a goal might have several paths to accomplish a singl
  
 As seen in the example there are not too many options, but when all options are combined the options yield a great amount of variation and a source of great frustration if you were to hand craft all the given operations.
  
- 
+
+---
+
+
  This GOAP implementation is based loosely on Jeff Orkin's work on Goal Oriented Action Planning
  - Jeff Orkin's website can be found here [https://alumni.media.mit.edu/](https://alumni.media.mit.edu/~jorkin/goap.html)
  
