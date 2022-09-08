@@ -406,6 +406,13 @@ GoalOrientedActionPlanner.Goap.new = function()
         end
     end
 
+    new.DirectLoad = function(self, goals, actions)
+        self.goals = goals
+        for _, goal in self.goals do
+            goal:BuildPlans(actions)
+        end
+    end
+
     new.Tick = function(self, worldState, actor)
         local bestGoal = nil
         local bestPriority = 0

@@ -20,7 +20,6 @@ return {
         -- Priority determines the order in which goals are evaluated, the planner will pick the goal having the highest priority
         -- If we have a target, we want to kill it, so return a high priority
         module.Priority = function(_, worldState: table, actor: Humanoid) : number
-            -- If we have a target, return 99, otherwise return 0 
             return worldState.Target and 99 or 0
         end
         
@@ -46,25 +45,19 @@ return {
         
         -- OnTick gets called **every** time we tick the planner, regardless if goal is active or not
         module.OnTick = function(worldState: table, actor: Humanoid) : boolean?
-            -- Do we already have a target?
             if worldState.Target == nil then
-                -- See if we can find a target within 50 studs
                 local result, target = common.ClosestPlayerWithinView(actor, 50)
-                -- Did we actually find a target?
                 worldState.Target = result and target or nil
             else
-                -- Is the target dead?
                 if worldState.Target.Health <= 0 then
                     worldState.Target = nil
-                    -- Target is dead, notify the planner that we need to replan if we are already working on a plan to kill the target
-                    return true
+                    return true -- By returning true we notify the planner that we have completed the goal and need to replan if we are already working on a plan to kill the target
                 end
         
                 -- Is the target still in range?
                 if common.DiffVector(actor, worldState.Target).Magnitude > 50 then
                     worldState.Target = nil
-                    -- Since we removed the target, notify the planner that we need to replan if we are already working on a plan to kill the target
-                    return false
+                    return false -- By returning false we notify the planner that we need to replan if we are already working on a plan to kill the target
                 end
             end
         
@@ -72,7 +65,6 @@ return {
             return nil -- (not actually neeeded but here for clarity)
         end
 
-        -- Return the goal
-        return module
+        return module -- Return the goal
     end
 }
