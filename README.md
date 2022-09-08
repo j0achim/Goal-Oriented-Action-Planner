@@ -1,18 +1,19 @@
 # Goal Oriented Action Planner
 
-What problem does GOAP actually solve? GOAP's intended use it to provide real-time control of autonomous character behavior in games, over traditional approaches such as FSM, BT or plain If structure. By intelligently linking goals and actions together by having a goal state, A* search algorithm is used to pre-plan all possible routes to solve a particular goal. 
+What problem does GOAP actually solve? GOAP's intended use it to provide real-time control of autonomous character behavior in games, over traditional approaches such as FSM, BT or plain If structure. By intelligently linking goals and actions together by having a goal state, A* search algorithm is used to pre-plan all possible 'routes' to solve a particular goal. 
 
-At runtime GOAP constantly backtest each plan to find the cheapest route that solves goal. In a similar fashion to real life any time anything around us chance so might our plans, GOAP also does this and re-evaluate its best plan every time it is called.
+At runtime GOAP constantly backtest each plan to find the cheapest route that solves goal. In a similar fashion to real life any time anything around us change so might our plans, GOAP also does this and re-evaluate it's best plan every time we tick GOAP.
 
  - FSM, BT's and If structures all suffer from being hard to manage once you reach a certain level of complexity where you want to avoid repeating yourself.
-
+  
+  
 As a visual example of how a goal might have several paths to accomplish a single goal, that would be ***highly complicated*** to solve and as such equally prone to bugs if any changes to the code are required using the traditional approaches.
 
 ![A* search algorithm to find cheapest path to reach goal state](https://github.com/j0achim/Goal-Oriented-Action-Planner/blob/f52427e789497a0c717b5627125a857f703a4bbc/media/example.png?raw=true "A* search algorithm to compute cheapest path to goal")
  
 As seen in the example there are not too many options, but when all options are combined the options yield a great amount of variation and a source of great frustration if you were to hand craft all the given operations.
- 
-
+  
+  
 ---
 
 
@@ -21,8 +22,8 @@ As seen in the example there are not too many options, but when all options are 
  
  
 ---
- 
- 
+  
+  
 ### Short low level explanation.
  1. **Goal**: Defines a desired world state.
  2. **Plan**: Contains list of actions.
