@@ -2,7 +2,7 @@
 
 What problem does GOAP actually solve? GOAP's intended use it to provide real-time control of autonomous character behavior in games, over traditional approaches such as FSM, BT or plain If structure. By intelligently linking goals and actions together by having a goal state, A* search algorithm is used to pre-plan all possible 'routes' to solve a particular goal. 
 
-At runtime GOAP constantly backtest each plan to find the cheapest route that solves goal. In a similar fashion to real life any time anything around us change so might our plans, GOAP also does this and re-evaluate it's best plan every time we tick GOAP.
+At runtime GOAP constantly backtest each plan to find the cheapest route that solves goal. In a similar fashion to real life at any point anything around us change so might our plans, GOAP also does this and re-evaluate it's best plan every time we tick GOAP.
 
  - FSM, BT's and If structures all suffer from being hard to manage once you reach a certain level of complexity where you want to avoid repeating yourself.
   
