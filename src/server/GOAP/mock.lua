@@ -1,11 +1,11 @@
 local types = require("goap")
 
 local goals = {
-    wander = types.Goal.new("wander goal", {wandering = false}, 0, nil),
-    idle = types.Goal.new("idle goal", {idle = false}, 10, nil),
-    killEnemy = types.Goal.new("kill player goal", {enemyDead = true}, 0, nil),
     keepFeed = types.Goal.new("keep feed goal", {hunger = true}, 0, nil),
-    syatWarm = types.Goal.new("stay warm goal", {cold = true}, 0, nil),
+    --wander = types.Goal.new("wander goal", {wandering = false}, 0, nil),
+    --idle = types.Goal.new("idle goal", {idle = false}, 10, nil),
+    --killEnemy = types.Goal.new("kill player goal", {enemyDead = true}, 0, nil),
+    --syatWarm = types.Goal.new("stay warm goal", {cold = true}, 0, nil),
 }
 
 local actions = {
@@ -51,6 +51,7 @@ for _, goal in goap.goals do
     local str = goal.name
     local time, plans = Timed(function() return goal:GetPlans(state, {}) end)
     print(("Retreived plans for goal: %s in %.2f us (%.2f ms)\n"):format(goal.name, time*1000, time))
+
     for _, plan in plans do
         local effectStr = ""
 
@@ -65,6 +66,7 @@ for _, goal in goap.goals do
         print(("Cost: %5s  -  %s"):format(plan:GetCost(state, {}), str, effectStr))
         str = goal.name
     end
+
     print("\n---------------------------------------------------------------------------------------------------------------\n")
 end
 
