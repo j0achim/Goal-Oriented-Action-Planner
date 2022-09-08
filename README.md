@@ -1,6 +1,6 @@
 # Goal Oriented Action Planner
 
-What problem does GOAP actually solve? GOAP's intended use it to provide real-time control of autonomous character behavior in games, over traditional approaches such as FSM, BT or plain If structure. By intelligently linking goals and actions together by having a goal state, and actions having effects and preconditions that will be tested to build rich plans.
+What problem does GOAP actually solve? GOAP's intended use it to provide real-time control of autonomous character behavior in games, over traditional approaches such as FSM, BT or plain If structure. By intelligently linking goals and actions together by having a goal state, and actions that link together by solving eachother and or goal.
 
  - FSM, BT's and If structures all suffer from being hard to manage once you reach a certain level of complexity where you want to avoid repeating yourself.
 
