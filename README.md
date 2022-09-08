@@ -46,9 +46,17 @@ Goals and Actions both share a similar design pattern with some key differences.
 
 ## Mock
 
-I have added a small tool [mock.lua](src/server/GOAP/mock.lua) that lets you virtualize goals and actions by making mock modules, useful if you want to test different scenarios without having to play test. 
+I have added a small tool [mock.lua](src/server/GOAP/mock.lua) that lets you virtualize goals and actions by making mock modules, useful if you want to test different scenarios without having to play test.
 
 ![mock.lua](media/mock_tool.png "mock.lua")
+
+### Not Running luau code in VS Code yet?
+
+Running luau code in VS Code can easily be achieved by downloading Luau binary [https://github.com/Roblox/luau/releases](https://github.com/Roblox/luau/releases), add to path or windows catalog.
+
+ - Install Taskrunner extension.
+ - Download the following config file [.vscode/tasks.json](.vscode/tasks.json)
+ - You will then see the following option in VS Code EXPLORER !["TASK RUNNER"](media/task_runner.png)
 
 ## Getting Started
 
