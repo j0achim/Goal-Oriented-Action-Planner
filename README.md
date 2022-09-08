@@ -44,10 +44,6 @@ Goals and Actions both share a similar design pattern with some key differences.
     - **Only** ticked when they are active.
     - Have cost function/attribute instead of priority, lower = better. 
 
-### Limitations
-
- - A plan will not allow a action to be run multiple times, as this will cause a stack overflow when pathfinding to compute possible paths. (this would generate infinite possible paths)
-
 ## Getting Started
 
 This serves as documentation being overly explicit.
