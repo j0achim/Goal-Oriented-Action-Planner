@@ -51,7 +51,7 @@ return {
         
                 The planner will only evaluate actions that have effects matching desired state, enabling us to build rich trees (plans) of actions and goals.
         
-                Goals can have multiple desired states if you want to have "similar" goals with totally different outcome.
+                Goals can have multiple desired states if you want to have "similar" goals with different outcome.
         --]]
         local module = goap.Goal.new("kill player", {enemyDead = true})
         
@@ -62,26 +62,27 @@ return {
         end
         
         -- CanRun is called every time we tick the planner to see if we can run this goal
+        -- when false this will ensure that planner not evaluate any actions further down the tree if cant run this goal
+        -- this would save us from computing the cost of actions, this can quickly become an expensive operation if we have many actions and tick is ran on every frame
         module.CanRun = function(_, worldState: table, actor: Humanoid) : boolean
-            -- If we have a target, we can run this goal, 
-            -- when false this will ensure that planner not evaluate any actions further down the tree if cant run this goal
-            -- this would save us from computing the cost of actions, this can quickly become an expensive operation if we have many actions and tick is ran on every frame
             return worldState.Target ~= nil
         end
         
         -- Gets called once when the goal is activated
+        -- Here we could set flags, start animations or w/e you need to do to start a certain operation.
         module.OnActivated = function(worldState: table, actor: Humanoid) : boolean?
-            -- Do we need to set worldstate, e.g start animations?
-            -- Set a flag to indicate that we are attacking?
         end
         
         -- Gets called once when the goal is deactivated, either because we are done or because we are interrupted by another goal having a higher priority
+        -- Here we could set flags, stop animations or w/e you need to do to cancel a certain operation.
         module.OnDeactivated = function(worldState: table, actor: Humanoid) : boolean?
-            -- Do we need to set worldstate, e.g stop animations?
-            -- Set a flag to indicate that we are not attacking?
         end
         
         -- OnTick gets called **every** time we tick the planner, regardless if goal is active or not
+        -- OnTick expects nil, true and false returns
+        -- By returning true we notify the planner that we have completed the goal and need look for new goal
+        -- By returning false we notify the planner that this goal is no longer a valid goal (there is a minute difference between true and false where false will set current goal to nil and force planner to find a new goal)
+        -- When nothing (nil) is returned this serves as no change and if a goal is active this does not cause any effect to the planner.
         module.OnTick = function(worldState: table, actor: Humanoid) : boolean?
             if worldState.Target == nil then
                 local result, target = common.ClosestPlayerWithinView(actor, 50)
@@ -89,20 +90,17 @@ return {
             else
                 if worldState.Target.Health <= 0 then
                     worldState.Target = nil
-                    return true -- By returning true we notify the planner that we have completed the goal and need to replan if we are already working on a plan to kill the target
+                    return true
                 end
         
                 if common.DiffVector(actor, worldState.Target).Magnitude > 50 then
                     worldState.Target = nil
-                    return false -- By returning false we notify the planner that we need to replan if we are already working on a plan to kill the target
+                    return false
                 end
             end
-        
-            -- By returning nil we are telling the planner that nothing has changed and we dont need to replan
-            return nil -- (not actually neeeded but here for clarity)
         end
 
-        return module -- Return the goal
+        return module
     end
 }
 ```
