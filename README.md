@@ -4,9 +4,12 @@ What problem does GOAP actually solve? GOAP's intended use it to provide real-ti
 
  - FSM, BT's and If structures all suffer from being hard to manage once you reach a certain level of complexity where you want to avoid repeating yourself.
 
+As a visual explanation of how a goal might have several paths to complete a single task, that will be ***highly complicated*** to solve and as such very prone to bugs if any changes  to the code is required using the traditional approaches.
+
+![A* search algorithm to find cheapest path to reach goal state](https://github.com/j0achim/Goal-Oriented-Action-Planner/blob/f52427e789497a0c717b5627125a857f703a4bbc/media/example.png?raw=true)
+
  This GOAP implementation is based loosely on Jeff Orkin's work on Goal Oriented Action Planning
  - Jeff Orkin's website can be found here [https://alumni.media.mit.edu/](https://alumni.media.mit.edu/~jorkin/goap.html)
-
 
 ### Short low level explanation.
  1. **Goal**: Defines a desired world state.
