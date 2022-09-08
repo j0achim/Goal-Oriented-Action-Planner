@@ -44,6 +44,12 @@ Goals and Actions both share a similar design pattern with some key differences.
     - **Only** ticked when they are active.
     - Have cost function/attribute instead of priority, lower = better. 
 
+## Mock
+
+I have added a small tool [mock.lua](src/server/GOAP/mock.lua) that lets you virtualize goals and actions by making mock modules, useful if you want to test different scenarios without having to play test. 
+
+[found here](src/server/GOAP/mock.lua)
+
 ## Getting Started
 
 This serves as documentation being overly explicit.

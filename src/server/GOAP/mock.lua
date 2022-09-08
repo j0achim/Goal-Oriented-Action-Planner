@@ -1,7 +1,7 @@
 local types = require("goap")
 
 local goals = {
-    keepFeed = types.Goal.new("keep feed goal", {hunger = true}, 0, nil),
+    keepFeed = types.Goal.new("keep feed", {hunger = true}, 0, nil),
     --wander = types.Goal.new("wander goal", {wandering = false}, 0, nil),
     --idle = types.Goal.new("idle goal", {idle = false}, 10, nil),
     --killEnemy = types.Goal.new("kill player goal", {enemyDead = true}, 0, nil),
@@ -9,17 +9,17 @@ local goals = {
 }
 
 local actions = {
-    tinder = types.Action.new("gather tinder action", 1000, nil, {haveTinder = true}),
-    buildFire = types.Action.new("build camp fire action", 1000, nil, {haveFire = true, haveWood = false}),
-    keepFireAlive = types.Action.new("keep fire alive action", 0, {haveTinder = true, haveFire = true}, {cold = true}),
-    walk = types.Action.new("walk action", 0, nil, {wandering = false}),
-    idle = types.Action.new("idle action", 0, nil, {idle = false}),
-    chaseEnemy = types.Action.new("chase action", 20, nil, {enemyInRange = true}),
-    stunEnemy = types.Action.new("stun action", 5, nil, {enemyDead = true}),
-    rangedAttack = types.Action.new("ranged attack action", 0, nil, {enemyDead = true}),
-    meleeAttack = types.Action.new("melee attack action", 0, {enemyInRange = true}, {enemyDead = true}),
-    getMeat = types.Action.new("gather Meat action", 1600, nil, {haveMeat = true}),
-    killBoar = types.Action.new("kill Boar action", 1000, nil, {haveMeat = true}),
+    tinder = types.Action.new("gather tinder", 1000, nil, {haveTinder = true}),
+    buildFire = types.Action.new("build camp fire", 1000, nil, {haveFire = true, haveWood = false}),
+    keepFireAlive = types.Action.new("keep fire alive", 0, {haveTinder = true, haveFire = true}, {cold = true}),
+    walk = types.Action.new("walk", 0, nil, {wandering = false}),
+    idle = types.Action.new("idle", 0, nil, {idle = false}),
+    chaseEnemy = types.Action.new("chase", 20, nil, {enemyInRange = true}),
+    stunEnemy = types.Action.new("stun", 5, nil, {enemyDead = true}),
+    rangedAttack = types.Action.new("ranged attack", 0, nil, {enemyDead = true}),
+    meleeAttack = types.Action.new("melee attack", 0, {enemyInRange = true}, {enemyDead = true}),
+    getMeat = types.Action.new("gather Meat", 1600, nil, {haveMeat = true}),
+    killBoar = types.Action.new("kill Boar", 1000, nil, {haveMeat = true}),
     eat = types.Action.new("eat meat", 10, {haveMeat = true}, {hunger = true}),
     gatherWood = types.Action.new("gather wood", 1000, nil, {haveWood = true}),
     gatherGems = types.Action.new("gather gems", 1000, nil, {haveGems = true}),
@@ -42,9 +42,8 @@ print(("\nLoaded in %.2f us (%.2f ms)\n"):format(loadTime*1000, loadTime))
 print("---------------------------------------------------------------------------------------------------------------\n")
 
 local state = {
-    --haveFire = true
-    --haveMeat = true,
-    --haveGold = true
+    haveMeat = true,
+    haveGold = true
 }
 
 for _, goal in goap.goals do
