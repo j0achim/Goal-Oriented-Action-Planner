@@ -6,7 +6,42 @@ local GoalOrientedActionPlanner = {
     Goap = {},
 }
 
-GoalOrientedActionPlanner.Action.new = function(name, cost, preconditions, effects)
+export type WorldState = {[string]:boolean}
+export type DesiredState = {[string]:boolean}
+export type Preconditions = {[string]:boolean}
+export type Effects = {[string]:boolean}
+
+export type Action = {
+    name: string,
+    cost: number,
+    preconditions: {[string]:boolean},
+    effects: {[string]:boolean},
+    Name: () -> string,
+    GetCost: (WorldState, Humanoid) -> number,
+    Effects: () -> {[string]:boolean},
+    Preconditions: () -> {[string]:boolean},
+    Satisfies: (WorldState) -> boolean,
+    Evaluate: (WorldState) -> boolean,
+    Activate: (WorldState, Humanoid) -> boolean,
+    Deactivate: (WorldState, Humanoid) -> boolean,
+    Tick: (WorldState, Humanoid) -> boolean,
+}
+
+export type Goal = {
+    name: string,
+    priority: number,
+    preconditions: {[string]:boolean},
+    effects: {[string]:boolean},
+    Name: () -> string,
+    Priority: () -> number,
+    Preconditions: () -> {[string]:boolean},
+    Effects: () -> {[string]:boolean},
+    Satisfies: (WorldState) -> boolean,
+    Evaluate: (WorldState) -> boolean,
+}
+
+-- Creates a new Action
+GoalOrientedActionPlanner.Action.new = function(name: string, cost: number, preconditions: Preconditions, effects: Effects) : Action
     local new = {}
     new.name = name
     new.cost = cost
@@ -69,7 +104,8 @@ GoalOrientedActionPlanner.Action.new = function(name, cost, preconditions, effec
     return new
 end
 
-GoalOrientedActionPlanner.Goal.new = function(name, desiredState, priority, condition)
+-- Creates a new goal
+GoalOrientedActionPlanner.Goal.new = function(name: string, desiredState: DesiredState, priority: number, condition: Preconditions) : Goal
     local new = {}
     new.name = name
     new.desiredState = desiredState
@@ -277,7 +313,8 @@ GoalOrientedActionPlanner.Goal.new = function(name, desiredState, priority, cond
     return new
 end
 
-GoalOrientedActionPlanner.Plan.new = function(actions)
+-- A plan holds a list of actions
+GoalOrientedActionPlanner.Plan.new = function(actions: {Action})
     local new = {}
     new.actions = actions
     new.tempState = {}
@@ -348,6 +385,7 @@ GoalOrientedActionPlanner.Plan.new = function(actions)
     return setmetatable(new, {__eq = Equals})
 end
 
+-- Create a instance of the GOAP system
 GoalOrientedActionPlanner.Goap.new = function()
     local new = {}
     new.goals = {}
