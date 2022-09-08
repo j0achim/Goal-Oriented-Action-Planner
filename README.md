@@ -88,7 +88,6 @@ return {
                     return true -- By returning true we notify the planner that we have completed the goal and need to replan if we are already working on a plan to kill the target
                 end
         
-                -- Is the target still in range?
                 if common.DiffVector(actor, worldState.Target).Magnitude > 50 then
                     worldState.Target = nil
                     return false -- By returning false we notify the planner that we need to replan if we are already working on a plan to kill the target
