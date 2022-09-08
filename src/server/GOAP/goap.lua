@@ -251,7 +251,6 @@ GoalOrientedActionPlanner.Goal.new = function(name, desiredState, priority, cond
             local result = self.OnTick(worldState, actor)
 
             if result ~= nil then
-                --self.currentAction:Deactivate(worldState, actor)
                 self:Deactivate(worldState, actor)
                 self.currentAction = nil
                 self.currentPlan = nil
