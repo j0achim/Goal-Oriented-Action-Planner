@@ -78,7 +78,7 @@ game:GetService("RunService").Stepped:Connect(function()
 end)
 ```
 
-The following serves as documentation being overly explicit.
+The following examples serves as documentation thus being overly explicit.
 
 In the following example this is a goal where we want to kill a player, the goal will scan for a target on every tick. If we have a target it check the distance between the NPC and player and clears target if the range is above 50 studs.
 
