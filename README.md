@@ -57,7 +57,7 @@ Running luau code in VS Code can easily be achieved by downloading Luau binary [
  - Install Taskrunner extension.
  - Download the following config file [.vscode/tasks.json](.vscode/tasks.json)
  - You will then see the following option in VS Code EXPLORER 
-    - !["TASK RUNNER"](media/task_runner.png)
+ !["TASK RUNNER"](media/task_runner.png)
 
 ## Getting Started
 
