@@ -26,7 +26,7 @@ Goals and Actions both share a similar design pattern with some key differences.
 
  - Actions
     - **Only** ticked when they are active.
-    - Have cost function/attribute instead of priority, lower = better.
+    - Have cost function/attribute instead of priority, lower = better. 
 
 
 
