@@ -1,6 +1,0 @@
-test*.lua
-.git*
-aftman.toml
-*.json
-*.*workspace
-.vscode
