@@ -62,8 +62,6 @@ Running luau code in VS Code can easily be achieved by downloading Luau binary [
 
 ## Getting Started
 
-This serves as documentation being overly explicit.
-
 For testing purpose add the following script as a child of a NPC model.
 
 ```lua
@@ -79,6 +77,8 @@ game:GetService("RunService").Stepped:Connect(function()
 	goap:Tick(worldState, script.Parent.Humanoid)
 end)
 ```
+
+The following serves as documentation being overly explicit.
 
 In the following example this is a goal where we want to kill a player, the goal will scan for a target on every tick. If we have a target it check the distance between the NPC and player and clears target if the range is above 50 studs.
 
