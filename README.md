@@ -34,7 +34,24 @@ Goals and Actions both share a similar design pattern with some key differences.
 
 This serves as documentation being overly explicit.
 
-This example is a goal where we want to kill a player, the goal will scan for a target on every tick. If we have a target it check the distance between the NPC and player and clears target if the range is above 50 studs.
+For testing purpose add the following script as a child of a NPC model.
+
+```lua
+local GoapPath = game:GetService("ServerScriptService"):WaitForChild("GoapModule")
+local GoapModule = require(GoapPath:WaitForChild("goap"))
+
+local goap = GoapModule.Goap.new()
+goap:Load(GoapPath:WaitForChild("goals"):GetChildren(), GoapPath:WaitForChild("actions"):GetChildren())
+
+local worldState = {}
+
+game:GetService("RunService").Stepped:Connect(function()
+	goap:Tick(worldState, script.Parent.Humanoid)
+end)
+```
+
+In the following example this is a goal where we want to kill a player, the goal will scan for a target on every tick. If we have a target it check the distance between the NPC and player and clears target if the range is above 50 studs.
+
 ```lua
 -- Description: A goal to kill a player
 return {

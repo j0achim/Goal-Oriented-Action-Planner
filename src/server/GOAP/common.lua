@@ -9,7 +9,7 @@ local Params = {
 local Common = {}
 
 -- Reverse a **list**
-function Common.Reverse(list)
+function Common.Reverse(list: table): table
     local new, input = {} , list or {}
     for i = #input, 1, -1 do
         new[#new + 1] = input[i]
