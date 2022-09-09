@@ -20,13 +20,17 @@ local actions = {
     meleeAttack = types.Action.new("melee attack", 0, {enemyInRange = true}, {enemyDead = true}),
     getMeat = types.Action.new("gather Meat", 1600, nil, {haveMeat = true}),
     killBoar = types.Action.new("kill Boar", 1000, nil, {haveMeat = true}),
-    eat = types.Action.new("eat meat", 10, {haveMeat = true}, {hunger = true}),
+    eat = types.Action.new("eat meat", 10, {haveMeat = true}, {haveMeat = false, hunger = true}),
     gatherWood = types.Action.new("gather wood", 1000, nil, {haveWood = true}),
     gatherGems = types.Action.new("gather gems", 1000, nil, {haveGems = true}),
     tradeGems = types.Action.new("trade gems for meat", 50, {haveGems = true}, {haveMeat = true, haveGems = false}),
+
     tradeWood = types.Action.new("trade wood for gold", 100, {haveWood = true}, {haveGold = true, haveWood = false}),
+
     tradeMeat = types.Action.new("trade gold for meat", 200, {haveGold = true}, {haveMeat = true, haveGold = false}),
     tradegold = types.Action.new("trade gold for gems", 200, {haveGold = true}, {haveGems = true, haveGold = false}),
+
+    --tradeMeatForGold = types.Action.new("trade meat for gold", 200, {haveMeat = true}, {haveGold = true, haveMeat = false}),
 }
 
 local function Timed(func) : number | any
@@ -42,12 +46,13 @@ print(("\nLoaded in %.2f us (%.2f ms)\n"):format(loadTime*1000, loadTime))
 print("---------------------------------------------------------------------------------------------------------------\n")
 
 local state = {
-    haveMeat = true,
-    haveGold = true
+    --haveMeat = true,
+    --haveWood = true,
+    --haveGold = true
 }
 
 for _, goal in goap.goals do
-    local str = goal.name
+    local str = ""
     local time, plans = Timed(function() return goal:GetPlans(state, {}) end)
     print(("Retreived plans for goal: %s in %.2f us (%.2f ms)\n"):format(goal.name, time*1000, time))
 
@@ -59,16 +64,19 @@ for _, goal in goap.goals do
         end
 
         for _, action in pairs(plan.actions) do
-            str = str .. " <- [" .. action:Name() .. "]"
+            str = str .. "[" .. action:Name() .. "] -> "
         end
 
+        str = str .. goal.name
+
         print(("Cost: %5s  -  %s"):format(plan:GetCost(state, {}), str, effectStr))
-        str = goal.name
+        str = ""
     end
 
     print("\n---------------------------------------------------------------------------------------------------------------\n")
 end
 
+print("Done!")
 
 --[[
 local function wait(n)

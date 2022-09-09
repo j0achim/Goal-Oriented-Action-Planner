@@ -57,7 +57,7 @@ GoalOrientedActionPlanner.Action.new = function(name: string, cost: number, prec
     end
 
     new.Effects = function(self) : {[string]:boolean}
-        return self.effects
+        return self.effects or {}
     end
 
     new.Preconditions = function(self) : {[string]:boolean}
@@ -74,7 +74,7 @@ GoalOrientedActionPlanner.Action.new = function(name: string, cost: number, prec
     end
 
     new.Evaluate = function(self, worldState) : boolean
-        if self:Preconditions() == nil then return true end
+        if self:Preconditions() == nil then return false end
         for key, value in pairs(self.preconditions) do
             if worldState[key] == nil or worldState[key] ~= value then
                 return false
@@ -124,7 +124,7 @@ GoalOrientedActionPlanner.Goal.new = function(name: string, desiredState: Desire
     end
 
     local function Contains(list, value)
-        for _, v in list do
+        for _, v in pairs(list) do
             if v == value then return true end
         end
         return false
@@ -218,18 +218,17 @@ GoalOrientedActionPlanner.Goal.new = function(name: string, desiredState: Desire
         local plans = {}
         local minCost = math.huge
         for _, plan in self.plans do
-            for index,action in plan.actions do
+            for index, action in plan.actions do
                 if action:Evaluate(worldState) then
-
                     local newPlan = plan:Clone()
-                    for i = index +1, #newPlan.actions do
+                    for i = 1, index -1 do
                         newPlan.actions[i] = nil
                     end
 
-                    if not Contains(plans, newPlan) then
-                        plans[#plans + 1] = newPlan
-                        local cost = newPlan:GetCost(worldState, actor)
-                        if cost < minCost then minCost = cost end
+                    local cost = newPlan:GetCost(worldState, actor)
+                    if cost < minCost then
+                        minCost = cost
+                        plans[#plans+1] = newPlan
                     end
                 end
             end
@@ -248,37 +247,38 @@ GoalOrientedActionPlanner.Goal.new = function(name: string, desiredState: Desire
         return #plans > 0 and plans or self.plans
     end
 
-    new.GetActions = function(self, preconditions, actions, plan)
+    new.GetActions = function(self, state, actions, plan)
         local result = {}
         for _, action in actions do
-            --if plan ~= nil and Contains(plan.actions, action) then continue end
-            if plan ~= nil and action:Satisfies(self.desiredState) then continue end
-            if action:Satisfies(preconditions) then table.insert(result, action) end
+            if plan == nil and action:Preconditions() ~= nil then continue end
+            if plan ~= nil and plan:ContainsAction(action) then continue end
+            if action:Evaluate(state) then result[#result + 1] = action end
         end
         return result
     end
 
     new.BuildPlans = function(self, actionsAvailable)
-        local preconditions = self:Preconditions()
-        local actions = self:GetActions(preconditions, actionsAvailable)
-        for _, action in actions do
+        for _, action in actionsAvailable do
+            if action:Preconditions() ~= nil then continue end
             table.insert(self.plans, GoalOrientedActionPlanner.Plan.new({action}))
         end
 
         for i = 1, 10 do
-            for _, plan in self.plans do
-                local precon = plan:CurrentAction():Preconditions()
-                if precon == nil then continue end
-                local newActions = self:GetActions(precon, actionsAvailable, plan)
+            for index = #self.plans, 1, -1 do
+                local plan = self.plans[index]
+                if self:Evaluate(plan:GetState()) then continue end
+                local newActions = self:GetActions(plan:GetState(), actionsAvailable, plan)
                 if #newActions > 0 then
-                    if #newActions > 1 then
-                        for a = 2, #newActions do
-                            self.plans[#self.plans + 1] = plan:Clone({newActions[a]})
-                        end
+                    for a = #newActions, 1, -1 do
+                        if a == 1 then plan:AddAction(newActions[a]) else self.plans[#self.plans + 1] = plan:Clone({newActions[a]}) end
                     end
-                    plan:AddAction(newActions[1])
                 end
             end
+        end
+
+        for index, plan in self.plans do
+            if self:Evaluate(plan:GetState()) then continue end
+            self.plans[index] = nil
         end
     end
 
@@ -325,6 +325,17 @@ GoalOrientedActionPlanner.Plan.new = function(actions: {Action})
         end
     end
 
+    new.GetState = function(self)
+        return self.tempState
+    end
+
+    new.ContainsAction = function(self, action)
+        for _, a in self.actions do
+            if a == action then return true end
+        end
+        return false
+    end
+
     new.AddAction = function(self, action)
         self.actions[#self.actions + 1] = action
         for key, value in pairs(action:Effects()) do
@@ -352,7 +363,7 @@ GoalOrientedActionPlanner.Plan.new = function(actions: {Action})
 
     new.GetCost = function(self, worldState, actor)
         local cost = 0
-        for _, action in ipairs(self.actions) do
+        for _, action in next, self.actions do
             cost = cost + action:GetCost(worldState, actor)
         end
         return cost
@@ -376,8 +387,8 @@ GoalOrientedActionPlanner.Plan.new = function(actions: {Action})
 
     local function Equals(a,b)
         if a == nil or b == nil or #a.actions ~= #b.actions then return false end
-        for i = 1, #a.actions do
-            if a.actions[i] ~= b.actions[i] then return false end
+        for i = 1, #a.actions do 
+            if a.actions[i] ~= b.actions[i] then return false end 
         end
         return true
     end
