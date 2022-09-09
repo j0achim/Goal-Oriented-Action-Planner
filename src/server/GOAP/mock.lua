@@ -2,18 +2,18 @@ local types = require("goap")
 
 local goals = {
     keepFeed = types.Goal.new("keep feed", {hunger = true}, 0, nil),
-    --wander = types.Goal.new("wander goal", {wandering = false}, 0, nil),
-    --idle = types.Goal.new("idle goal", {idle = false}, 10, nil),
-    --killEnemy = types.Goal.new("kill player goal", {enemyDead = true}, 0, nil),
-    --syatWarm = types.Goal.new("stay warm goal", {cold = true}, 0, nil),
+    wander = types.Goal.new("wander", {wandering = false}, 0, nil),
+    idle = types.Goal.new("idle", {idle = false}, 10, nil),
+    killEnemy = types.Goal.new("kill player", {enemyDead = true}, 0, nil),
+    syatWarm = types.Goal.new("stay warm", {cold = true}, 0, nil),
 }
 
 local actions = {
-    tinder = types.Action.new("gather tinder", 1000, nil, {haveTinder = true}),
-    buildFire = types.Action.new("build camp fire", 1000, nil, {haveFire = true, haveWood = false}),
-    keepFireAlive = types.Action.new("keep fire alive", 0, {haveTinder = true, haveFire = true}, {cold = true}),
+    tinder = types.Action.new("gather tinder and wood", 1000, nil, {haveTinder = true, haveWood = true}),
+    buildFire = types.Action.new("build camp fire", 1000, {haveWood = true}, {haveCampFire = true, haveWood = false}),
+    keepFireAlive = types.Action.new("keep fire alive", 0, {haveTinder = true, haveCampFire = true}, { haveTinder = false, cold = true}),
     walk = types.Action.new("walk", 0, nil, {wandering = false}),
-    idle = types.Action.new("idle", 0, nil, {idle = false}),
+    idle = types.Action.new("do nothing", 0, nil, {idle = false}),
     chaseEnemy = types.Action.new("chase", 20, nil, {enemyInRange = true}),
     stunEnemy = types.Action.new("stun", 5, nil, {enemyDead = true}),
     rangedAttack = types.Action.new("ranged attack", 0, nil, {enemyDead = true}),
@@ -24,13 +24,9 @@ local actions = {
     gatherWood = types.Action.new("gather wood", 1000, nil, {haveWood = true}),
     gatherGems = types.Action.new("gather gems", 1000, nil, {haveGems = true}),
     tradeGems = types.Action.new("trade gems for meat", 50, {haveGems = true}, {haveMeat = true, haveGems = false}),
-
     tradeWood = types.Action.new("trade wood for gold", 100, {haveWood = true}, {haveGold = true, haveWood = false}),
-
     tradeMeat = types.Action.new("trade gold for meat", 200, {haveGold = true}, {haveMeat = true, haveGold = false}),
     tradegold = types.Action.new("trade gold for gems", 200, {haveGold = true}, {haveGems = true, haveGold = false}),
-
-    --tradeMeatForGold = types.Action.new("trade meat for gold", 200, {haveMeat = true}, {haveGold = true, haveMeat = false}),
 }
 
 local function Timed(func) : number | any
@@ -77,20 +73,3 @@ for _, goal in goap.goals do
 end
 
 print("Done!")
-
---[[
-local function wait(n)
-    local t = os.clock()
-    while os.clock() - t <= n do end
-end
-
-local state = {}
-
-print("Starting to tick...")
-
-while true do
-    print("Tick...")
-    goap:Tick(state, {})    
-    wait(.5)
-end
---]]
