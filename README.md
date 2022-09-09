@@ -60,6 +60,12 @@ Running luau code in VS Code can easily be achieved by downloading Luau binary [
 
 !["TASK RUNNER"](media/task_runner.png)
 
+## Limitations
+
+ - Actions that have no preconditions are only meant to start a plan. (a action can both start and end a goal i.e. single action plan)
+ - Actions that have no preconditions will **never** be evaluated in middle of a plan as this will cause cyclic recursion.
+ - Plans will not try to evaluate a action that already exist in the plan, this would also cause cyclic recursion. 
+
 ## Getting Started
 
 For testing purpose add the following script as a child of a NPC model.
