@@ -1,43 +1,53 @@
--- GOAP (Goal Oriented Action Planner) implementation for Roblox
-local GoalOrientedActionPlanner = {
-    Goal = {},
-    Action = {},
-    Plan = {},
-    Goap = {},
-}
-
-export type WorldState = {[string]:boolean}
-export type DesiredState = {[string]:boolean}
-export type Preconditions = {[string]:boolean}
-export type Effects = {[string]:boolean}
-
+export type WorldState = Dictionary<{[string]:boolean}>
+export type DesiredState = Dictionary<{[string]:boolean}>
+export type Preconditions = Dictionary<{[string]:boolean}>
+export type Effects = Dictionary<{[string]:boolean}>
+export type GoalModule = { new: () -> Goal }
+export type ActionModule = { new: () -> Action }
 export type Action = {
     name: string,
     cost: number,
-    preconditions: {[string]:boolean},
-    effects: {[string]:boolean},
+    preconditions: Preconditions,
+    effects: Effects,
     Name: () -> string,
     GetCost: (WorldState, Humanoid) -> number,
-    Effects: () -> {[string]:boolean},
-    Preconditions: () -> {[string]:boolean},
+    Effects: () -> Effects,
+    Preconditions: () -> Preconditions,
     Satisfies: (WorldState) -> boolean,
     Evaluate: (WorldState) -> boolean,
     Activate: (WorldState, Humanoid) -> boolean,
     Deactivate: (WorldState, Humanoid) -> boolean,
     Tick: (WorldState, Humanoid) -> boolean,
 }
-
 export type Goal = {
     name: string,
     priority: number,
-    preconditions: {[string]:boolean},
-    effects: {[string]:boolean},
+    preconditions: Preconditions,
+    effects: Effects,
     Name: () -> string,
     Priority: () -> number,
-    Preconditions: () -> {[string]:boolean},
-    Effects: () -> {[string]:boolean},
+    Preconditions: () -> Preconditions,
+    Effects: () -> Effects,
     Satisfies: (WorldState) -> boolean,
     Evaluate: (WorldState) -> boolean,
+}
+export type Plan = {
+    actions: Array<Action>,
+    cost: number,
+    GetState: () -> WorldState,
+    GetCost: (WorldState, Humanoid) -> number,
+    ContainsAction: (Action) -> boolean,
+    AddAction : (Action) -> nil,
+    RemoveCurrentAction: () -> nil,
+}
+
+-- GOAP (Goal Oriented Action Planner) implementation for Roblox
+local GoalOrientedActionPlanner = {
+    Goal = {},
+    Action = {},
+    Plan = {},
+    Goap = {},
+    Manager = {}
 }
 
 -- Creates a new Action
@@ -56,11 +66,11 @@ GoalOrientedActionPlanner.Action.new = function(name: string, cost: number, prec
         return self.cost
     end
 
-    new.Effects = function(self) : {[string]:boolean}
+    new.Effects = function(self) : Effects
         return self.effects or {}
     end
 
-    new.Preconditions = function(self) : {[string]:boolean}
+    new.Preconditions = function(self) : Preconditions
         return self.preconditions
     end
 
@@ -317,7 +327,7 @@ GoalOrientedActionPlanner.Goal.new = function(name: string, desiredState: Desire
 end
 
 -- A plan holds a list of actions
-GoalOrientedActionPlanner.Plan.new = function(actions: {Action})
+GoalOrientedActionPlanner.Plan.new = function(actions: Array<Action>)
     local new = {}
     new.actions = actions
     new.tempState = {}
@@ -328,25 +338,29 @@ GoalOrientedActionPlanner.Plan.new = function(actions: {Action})
         end
     end
 
-    new.GetState = function(self)
+    -- Get state is used while GOAP is building the plan
+    new.GetState = function(self) : WorldState
         return self.tempState
     end
 
-    new.ContainsAction = function(self, action)
+    -- Check if action is already in the plan
+    new.ContainsAction = function(self, action: Action) : boolean
         for _, a in self.actions do
             if a == action then return true end
         end
         return false
     end
 
-    new.AddAction = function(self, action)
+    -- Adds an **action** to the plan
+    new.AddAction = function(self, action: Action) : nil
         self.actions[#self.actions + 1] = action
         for key, value in pairs(action:Effects()) do
             self.tempState[key] = value
         end
     end
 
-    new.CurrentAction = function(self)
+    -- Returns the current action in the plan queue
+    new.CurrentAction = function(self): Action?
         if #self.actions == 0 then return nil end
 
         for i = #self.actions, 1, -1 do
@@ -358,13 +372,15 @@ GoalOrientedActionPlanner.Plan.new = function(actions: {Action})
         return nil
     end
 
+    -- Removes the current action from the plan queue
     new.RemoveCurrentAction = function(self)
         if #self.actions > 0 then
             self.actions[#self.actions] = nil
         end
     end
 
-    new.GetCost = function(self, worldState, actor)
+    -- Returns the total cost of all actions in the plan
+    new.GetCost = function(self, worldState, actor) : number
         local cost = 0
         for _, action in next, self.actions do
             cost = cost + action:GetCost(worldState, actor)
@@ -372,7 +388,8 @@ GoalOrientedActionPlanner.Plan.new = function(actions: {Action})
         return cost
     end
 
-    new.Clone = function(self, actions)
+    -- Returns a new plan with the actions of the current plan and the actions passed in
+    new.Clone = function(self, actions) : Plan
         local newActions = {}
 
         for _, action in ipairs(self.actions) do
@@ -388,7 +405,8 @@ GoalOrientedActionPlanner.Plan.new = function(actions: {Action})
         return GoalOrientedActionPlanner.Plan.new(newActions)
     end
 
-    local function Equals(a,b)
+    -- Equality check for plans, a plans uniqueness is determined by the actions it contains
+    local function Equals(a: Plan,b: Plan): boolean
         if a == nil or b == nil or #a.actions ~= #b.actions then return false end
         for i = 1, #a.actions do 
             if a.actions[i] ~= b.actions[i] then return false end 
@@ -401,11 +419,12 @@ end
 
 -- Create a instance of the GOAP system
 GoalOrientedActionPlanner.Goap.new = function()
-    local new = {}
-    new.goals = {}
-    new.currentGoal = nil
+    local goap = {}
+    goap.goals = {}
+    goap.currentGoal = nil
 
-    new.Load = function(self, goals, actions)
+    -- Load lists of goals and actions from modules
+    goap.Load = function(self, goals: Array<GoalModule>, actions: Array<ActionModule>): nil
         for _, goal in pairs(goals) do
             self.goals[#self.goals + 1] = require(goal).new()
         end
@@ -420,14 +439,16 @@ GoalOrientedActionPlanner.Goap.new = function()
         end
     end
 
-    new.DirectLoad = function(self, goals, actions)
+    -- Load lists of goals and actions from tables
+    goap.DirectLoad = function(self, goals: Array<Goal>, actions: Array<Action>): nil
         self.goals = goals
         for _, goal in self.goals do
             goal:BuildPlans(actions)
         end
     end
 
-    new.Tick = function(self, worldState, actor)
+    -- Ticking the GOAP system, this is our engine that drives the AI
+    goap.Tick = function(self, worldState: WorldState, actor: Humanoid)
         local bestGoal = nil
         local bestPriority = 0
         for _, goal in self.goals do
@@ -465,7 +486,7 @@ GoalOrientedActionPlanner.Goap.new = function()
         end	
     end
 
-    return new
+    return goap
 end
 
 return GoalOrientedActionPlanner

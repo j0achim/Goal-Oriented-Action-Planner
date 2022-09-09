@@ -11,7 +11,8 @@ local function Timed(func) : number | any
     return (os.clock() - startTime) * 1000, result
 end
 
-local goap = require("goap")
+local VisualStudioCode = true
+local goap = require(VisualStudioCode and "goap" or script.Parent.goap) -- Hacky way to let VS Code pull type references from the goap module
 
 local goals = {
     goap.Goal.new("keep feed", {hunger = true}, 0, nil),
@@ -81,3 +82,7 @@ for _, goal in goap.goals do
 end
 
 print("Done!")
+
+for k,v in pairs(table) do
+    print(k,v)
+end
