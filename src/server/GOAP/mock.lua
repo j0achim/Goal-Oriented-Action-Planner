@@ -1,3 +1,16 @@
+local function Reverse(list: table): table
+    local new, input = {} , list or {}
+    for i = #input, 1, -1 do
+        new[#new + 1] = input[i]
+    end
+    return new
+end
+
+local function Timed(func) : number | any
+    local startTime, result = os.clock(), func()
+    return (os.clock() - startTime) * 1000, result
+end
+
 local goap = require("goap")
 
 local goals = {
@@ -28,19 +41,6 @@ local actions = {
     goap.Action.new("trade gold for meat", 200, {haveGold = true}, {haveMeat = true, haveGold = false}),
     goap.Action.new("trade gold for gems", 200, {haveGold = true}, {haveGems = true, haveGold = false}),
 }
-
-local function Reverse(list: table): table
-    local new, input = {} , list or {}
-    for i = #input, 1, -1 do
-        new[#new + 1] = input[i]
-    end
-    return new
-end
-
-local function Timed(func) : number | any
-    local startTime, result = os.clock(), func()
-    return (os.clock() - startTime) * 1000, result
-end
 
 local goap = goap.Goap.new()
 
