@@ -218,7 +218,7 @@ GoalOrientedActionPlanner.Goal.new = function(name: string, desiredState: Desire
         local plans = {}
         local minCost = math.huge
         for _, plan in self.plans do
-            for index, action in plan.actions do
+            for index, action in Reverse(plan.actions) do
                 if action:Evaluate(worldState) then
                     local newPlan = plan:Clone()
                     for i = 1, index -1 do
@@ -277,7 +277,10 @@ GoalOrientedActionPlanner.Goal.new = function(name: string, desiredState: Desire
         end
 
         for index, plan in self.plans do
-            if self:Evaluate(plan:GetState()) then continue end
+            if self:Evaluate(plan:GetState()) then 
+                plan.actions = Reverse(plan.actions)
+                continue 
+            end
             self.plans[index] = nil
         end
     end
@@ -409,7 +412,7 @@ GoalOrientedActionPlanner.Goap.new = function()
 
         local actionList = {}
         for _, action in pairs(actions) do
-            actionList[#actionList + 1] = require(action)
+            actionList[#actionList + 1] = require(action).new()
         end
 
         for _, goal in self.goals do

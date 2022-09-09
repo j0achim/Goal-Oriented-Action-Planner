@@ -29,6 +29,14 @@ local actions = {
     tradegold = types.Action.new("trade gold for gems", 200, {haveGold = true}, {haveGems = true, haveGold = false}),
 }
 
+local function Reverse(list: table): table
+    local new, input = {} , list or {}
+    for i = #input, 1, -1 do
+        new[#new + 1] = input[i]
+    end
+    return new
+end
+
 local function Timed(func) : number | any
     local startTime, result = os.clock(), func()
     return (os.clock() - startTime) * 1000, result
@@ -59,7 +67,7 @@ for _, goal in goap.goals do
             effectStr = effectStr .. "  " .. key .. " = " .. tostring(value)
         end
 
-        for _, action in pairs(plan.actions) do
+        for _, action in pairs(Reverse(plan.actions)) do
             str = str .. "[" .. action:Name() .. "] -> "
         end
 
